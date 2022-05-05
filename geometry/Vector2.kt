@@ -1,4 +1,4 @@
-package sge.geometry
+package king_game_engine.geometry
 
 import java.awt.BasicStroke
 import java.awt.Color

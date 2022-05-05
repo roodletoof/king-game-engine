@@ -1,4 +1,4 @@
-package sge.core
+package king_game_engine.core
 
 import java.awt.Graphics2D
 
@@ -22,7 +22,7 @@ abstract  class King (val screenWidth: Int, val screenHeight: Int, val fps: Int)
      * Called once per frame after update.
      * @param canvas The canvas to draw to.
      * Use all the normal Graphics2D methods,
-     * or one of the sge.graphics classes.
+     * or one of the king_game_engine.graphics classes.
      */
     abstract fun draw(canvas: Graphics2D)
 

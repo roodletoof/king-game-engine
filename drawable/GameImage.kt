@@ -1,6 +1,6 @@
-package sge.drawable
+package king_game_engine.drawable
 
-import sge.geometry.Vector2
+import king_game_engine.geometry.Vector2
 import java.awt.Graphics2D
 import java.awt.geom.AffineTransform
 import java.awt.image.BufferedImage

@@ -1,4 +1,4 @@
-package sge.communication
+package king_game_engine.communication
 
 import java.util.*
 

@@ -1,4 +1,4 @@
-package sge
+package king_game_engine
 
 import java.awt.Color
 import java.awt.Graphics2D

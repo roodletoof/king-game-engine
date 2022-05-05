@@ -1,4 +1,4 @@
-package sge.core
+package king_game_engine.core
 
 import java.awt.Dimension
 import java.awt.Graphics
