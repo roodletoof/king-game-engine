@@ -4,9 +4,9 @@ import java.awt.Graphics2D
 
 
 /**
- * The superclass of all SimpleGameEngine games.
+ * The superclass of all King games.
  */
-abstract  class SimpleGameEngine (val screenWidth: Int, val screenHeight: Int, val fps: Int) {
+abstract  class King (val screenWidth: Int, val screenHeight: Int, val fps: Int) {
     private var backend: Backend? = null
 
 
@@ -33,7 +33,7 @@ abstract  class SimpleGameEngine (val screenWidth: Int, val screenHeight: Int, v
     /**
      * Starts the game.
      */
-    fun run(): SimpleGameEngine {
+    fun run(): King {
         backend = Backend(screenWidth, screenHeight, fps, this)
         return this
     }

@@ -14,7 +14,7 @@ import javax.swing.JPanel
 /**
  * Calls update and draw methods of given Game
  */
-class Backend(width: Int, height: Int, private val fps: Int, private val game: SimpleGameEngine) : JFrame(), ActionListener, KeyListener {
+class Backend(width: Int, height: Int, private val fps: Int, private val game: King) : JFrame(), ActionListener, KeyListener {
     private val panel = GamePanel(width, height, game)
     private val timer = javax.swing.Timer(1000 / fps, this)
 
@@ -49,7 +49,7 @@ class Backend(width: Int, height: Int, private val fps: Int, private val game: S
     private class GamePanel(
         private val preferredWidth: Int,
         private val preferredHeight: Int,
-        private val game: SimpleGameEngine
+        private val game: King
     ) : JPanel() {
 
         override fun getPreferredSize(): Dimension {
