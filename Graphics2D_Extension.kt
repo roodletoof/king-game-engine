@@ -1,18 +1,19 @@
 package king_game_engine
 
+import king_game_engine.geometry.Vector2
 import java.awt.Color
 import java.awt.Graphics2D
-import java.awt.geom.AffineTransform
 
-// Temporary transform extensions //////////
+/**
+ * Stores current transform, performs given function, and finally sets transform to original state.
+ * @param lambda The function to perform.
+ */
+fun Graphics2D.performRevert(lambda: func) {
+    val originalTransform = transform
+    lambda()
+    transform = originalTransform
+}
 
-fun Graphics2D.withTranslate(x: Int, y: Int, lambda: func)                   = performWith(lambda){ translate( x, y )     }
-fun Graphics2D.withTranslate(tx: Double, ty: Double, lambda: func)           = performWith(lambda){ translate( tx, ty )   }
-fun Graphics2D.withRotate(theta: Double, lambda: func)                       = performWith(lambda){ rotate( theta )       }
-fun Graphics2D.withRotate(theta: Double, x: Double, y: Double, lambda: func) = performWith(lambda){ rotate( theta, x, y ) }
-fun Graphics2D.withScale(sx: Double, sy: Double, lambda: func)               = performWith(lambda){ scale( sx, sy )       }
-fun Graphics2D.withShear(shx: Double, shy: Double, lambda: func)             = performWith(lambda){ shear( shx, shy )     }
-fun Graphics2D.withTransform(Tx: AffineTransform, lambda: func)              = performWith(lambda){ transform( Tx )       }
 
 // Color parameter extensions //////////////
 fun Graphics2D.fillRect(x: Int, y: Int, width: Int, height: Int, color: Color) {
@@ -20,6 +21,14 @@ fun Graphics2D.fillRect(x: Int, y: Int, width: Int, height: Int, color: Color) {
     fillRect(x, y, width, height)
 }
 
+
+// Vector2 support /////////////////////////
+fun Graphics2D.fillRect(position: Vector2, size: Vector2) {
+    fillRect(position.xInt, position.yInt, size.xInt, size.yInt)
+}
+fun Graphics2D.fillRect(position: Vector2, size: Vector2, color: Color) {
+    fillRect(position.xInt, position.yInt, size.xInt, size.yInt, color)
+}
 
 // Helper functions ////////////////////////
 
