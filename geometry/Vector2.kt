@@ -10,7 +10,27 @@ class Vector2(x: Number, y: Number) {
     var x = x.toDouble()
     var y = y.toDouble()
 
-    fun clone() = Vector2(x, y)
+    var xInt: Int
+        get() = x.toInt()
+        set(value) {x = value.toDouble()}
+
+    var yInt: Int
+        get() = y.toInt()
+        set(value) {y = value.toDouble()}
+
+    var xFloat: Float
+        get() = x.toFloat()
+        set(value) {x = value.toDouble()}
+
+    var yFloat: Float
+        get() = x.toFloat()
+        set(value) {x = value.toDouble()}
+
+    fun copy() = Vector2(x, y)
+
+    fun round() = Vector2(round(x), round(y))
+    fun ceil() = Vector2(ceil(x), ceil(y))
+    fun floor() = Vector2(floor(x), floor(y))
 
     /**
      * Draw the vector for debugging purposes.
