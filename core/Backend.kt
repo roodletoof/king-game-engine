@@ -1,5 +1,9 @@
 package king_game_engine.core
 
+import king_game_engine.fillRect
+import king_game_engine.geometry.Vector2
+import king_game_engine.performRevert
+import java.awt.Color
 import java.awt.Dimension
 import java.awt.Graphics
 import java.awt.Graphics2D
@@ -9,6 +13,7 @@ import java.awt.event.KeyEvent
 import java.awt.event.KeyListener
 import javax.swing.JFrame
 import javax.swing.JPanel
+import kotlin.math.min
 
 
 /**
@@ -25,7 +30,7 @@ class Backend(width: Int, height: Int, private val fps: Int, private val game: K
         pack()
         setLocationRelativeTo(null)
         isVisible = true
-        isResizable = false
+        //isResizable = false
         timer.start()
     }
 
@@ -51,12 +56,45 @@ class Backend(width: Int, height: Int, private val fps: Int, private val game: K
         private val preferredHeight: Int,
         private val game: King
     ) : JPanel() {
-
         override fun getPreferredSize(): Dimension {
             return Dimension(preferredWidth, preferredHeight)
         }
-        override fun paint(g: Graphics) {
-            game.draw(g as Graphics2D)
+        override fun paint(canvas: Graphics) {
+            canvas as Graphics2D
+
+            // First reposition and scale gave view
+            val scale = min(
+                width / preferredWidth.toDouble(),
+                height / preferredHeight.toDouble()
+            )
+
+            val middleCord = Vector2(width, height) / 2.0
+            val scaledSize = Vector2(preferredWidth, preferredHeight) * scale
+            val newOrigin = middleCord - scaledSize / 2.0
+
+            canvas.performRevert {
+                canvas.translate(newOrigin.x, newOrigin.y)
+                canvas.scale(scale, scale)
+                game.draw(canvas)
+            }
+
+            // Then draw black bars
+            canvas.color = Color.BLACK
+
+            if (newOrigin.x == newOrigin.y) { return }
+
+            if (newOrigin.x > newOrigin.y) {
+                val sideBarSize = newOrigin.copy()
+                sideBarSize.yInt = height
+                canvas.fillRect(Vector2(), sideBarSize.ceil())
+                canvas.fillRect(Vector2(sideBarSize.x + scaledSize.x, 0), sideBarSize.ceil())
+                return
+            }
+
+            val topBottomBarSize = newOrigin.copy()
+            topBottomBarSize.xInt = width
+            canvas.fillRect(Vector2(), topBottomBarSize.ceil())
+            canvas.fillRect(Vector2(0, topBottomBarSize.y + scaledSize.y), topBottomBarSize.ceil())
         }
     }
 
