@@ -1,11 +1,11 @@
 package king_game_engine.drawable
 
 import king_game_engine.geometry.Vector2
-import king_game_engine.performRevert
+import king_game_engine.swing_extensions.performRevert
 import king_game_engine.swing_extensions.scale
 import king_game_engine.swing_extensions.shear
 import king_game_engine.swing_extensions.transform
-import king_game_engine.translate
+import king_game_engine.swing_extensions.translate
 import java.awt.Graphics2D
 import java.awt.geom.AffineTransform
 import java.awt.image.BufferedImage
