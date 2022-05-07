@@ -7,6 +7,7 @@ import java.awt.Color
 import java.awt.Dimension
 import java.awt.Graphics
 import java.awt.Graphics2D
+import java.awt.RenderingHints.*
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
 import java.awt.event.KeyEvent
@@ -30,7 +31,6 @@ class Backend(width: Int, height: Int, private val fps: Int, private val game: K
         pack()
         setLocationRelativeTo(null)
         isVisible = true
-        //isResizable = false
         timer.start()
     }
 
@@ -56,13 +56,24 @@ class Backend(width: Int, height: Int, private val fps: Int, private val game: K
         private val preferredHeight: Int,
         private val game: King
     ) : JPanel() {
+
+        private val RENDER_HINTS = mapOf(
+                KEY_ANTIALIASING to VALUE_ANTIALIAS_OFF,
+                KEY_ALPHA_INTERPOLATION to VALUE_ALPHA_INTERPOLATION_SPEED,
+                KEY_COLOR_RENDERING to VALUE_COLOR_RENDER_SPEED,
+                KEY_DITHERING to VALUE_DITHER_ENABLE,
+                KEY_INTERPOLATION to VALUE_INTERPOLATION_NEAREST_NEIGHBOR,
+                KEY_RENDERING to VALUE_RENDER_SPEED
+            )
+
         override fun getPreferredSize(): Dimension {
             return Dimension(preferredWidth, preferredHeight)
         }
         override fun paint(canvas: Graphics) {
             canvas as Graphics2D
+            canvas.setRenderingHints(RENDER_HINTS)
 
-            // First reposition and scale gave view
+            // First reposition and scale game view
             val scale = min(
                 width / preferredWidth.toDouble(),
                 height / preferredHeight.toDouble()
@@ -79,9 +90,9 @@ class Backend(width: Int, height: Int, private val fps: Int, private val game: K
             }
 
             // Then draw black bars
-            canvas.color = Color.BLACK
-
             if (newOrigin.x == newOrigin.y) { return }
+
+            canvas.color = Color.BLACK
 
             if (newOrigin.x > newOrigin.y) {
                 val sideBarSize = newOrigin.copy()
