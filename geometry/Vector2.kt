@@ -1,5 +1,6 @@
 package king_game_engine.geometry
 
+import king_game_engine.performRevert
 import java.awt.BasicStroke
 import java.awt.Color
 import java.awt.Graphics2D
@@ -37,12 +38,10 @@ class Vector2(x: Number, y: Number) {
      * @param canvas The canvas to draw to.
      * @param position Where on the canvas this vector should be drawn from.
      */
-    fun draw(canvas: Graphics2D, position: Vector2 = Vector2()) {
-        canvas.color = Color.WHITE
+    fun draw(canvas: Graphics2D, position: Vector2 = Vector2(), color: Color = Color.WHITE) {
         canvas.stroke = BasicStroke(1.0F)
 
         val end = position + this
-        canvas.drawLine(position.x.toInt(), position.y.toInt(), end.x.toInt(), end.y.toInt())
 
         val tip = Polygon()
         tip.addPoint(end.x.toInt(), end.y.toInt())
@@ -53,7 +52,18 @@ class Vector2(x: Number, y: Number) {
             tip.addPoint(point.x.toInt(), point.y.toInt())
         }
 
-        canvas.fillPolygon(tip)
+        fun drawLine(color: Color) {
+            canvas.color = color
+            canvas.drawLine(position.x.toInt(), position.y.toInt(), end.x.toInt(), end.y.toInt())
+            canvas.fillPolygon(tip)
+        }
+
+        canvas.performRevert { // Shadow to make the arrow more visible in bright environments.
+            canvas.translate(2, 2)
+            drawLine(Color.BLACK)
+        }
+
+        drawLine(color)
 
 
     }
