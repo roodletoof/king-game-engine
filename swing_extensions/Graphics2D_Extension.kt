@@ -14,6 +14,13 @@ fun Graphics2D.performRevert(lambda: func) {
     transform = originalTransform
 }
 
+fun Graphics2D.translate(amount: Vector2) {
+    translate(amount.x, amount.y)
+}
+
+fun Graphics2D.scale(amount: Vector2) {
+    scale(amount.x, amount.y)
+}
 
 // Color parameter extensions //////////////
 fun Graphics2D.fillRect(x: Int, y: Int, width: Int, height: Int, color: Color) {
