@@ -1,8 +1,8 @@
 package king_game_engine.core
 
-import king_game_engine.fillRect
 import king_game_engine.geometry.Vector2
-import king_game_engine.performRevert
+import king_game_engine.swing_extensions.fillRect
+import king_game_engine.swing_extensions.performRevert
 import java.awt.Color
 import java.awt.Dimension
 import java.awt.Graphics
@@ -18,7 +18,9 @@ import kotlin.math.min
 
 
 /**
- * Calls update and draw methods of given Game
+ * Uses swing library to draw to call update and draw methods in fixed intervals of given King game.
+ * Also provides game with easier to use input methods.
+ * Handles window scaling by assuming the user always wants to keep the same aspect ratio as the original screen resolution.
  */
 class Backend(width: Int, height: Int, private val fps: Int, private val game: King) : JFrame(), ActionListener, KeyListener {
     private val panel = GamePanel(width, height, game)
@@ -51,6 +53,11 @@ class Backend(width: Int, height: Int, private val fps: Int, private val game: K
         }
     }
 
+    /**
+     * Resizes drawing operations and moves the view to the middle of the screen.
+     * Calls King.draw(canvas) Where canvas is a Graphics2D object that draws on this GamePanel.
+     * Finally, draws black bars over sections of the GamePanel if the window aspect ratio is off.
+     */
     private class GamePanel(
         private val preferredWidth: Int,
         private val preferredHeight: Int,
