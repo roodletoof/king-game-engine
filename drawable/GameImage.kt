@@ -23,11 +23,11 @@ class GameImage(filename: String){
 
     fun draw(
         canvas: Graphics2D,
-        position: Vector2 = Vector2(),
+        position: Vector2 = Vector2(isMutable = false),
         rotation: Double = 0.0,
-        shear: Vector2 = Vector2(),
-        scale: Vector2 = Vector2(1, 1),
-        anchor: Vector2 = Vector2(img.width, img.height) / 2.0 + 0.5
+        shear: Vector2 = Vector2(isMutable = false),
+        scale: Vector2 = Vector2(1, 1, isMutable = false),
+        anchor: Vector2 = (Vector2(img.width, img.height) / 2 + 0.5).makeImmutable()
     ) {
 
         val at = AffineTransform()
