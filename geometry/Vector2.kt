@@ -7,9 +7,13 @@ import java.awt.Graphics2D
 import java.awt.Polygon
 import kotlin.math.*
 
+
 class Vector2(x: Number, y: Number) {
     var x = x.toDouble()
     var y = y.toDouble()
+
+    constructor(both: Number) : this(both, both)
+    constructor() : this(0)
 
     var xInt: Int
         get() = x.toInt()
@@ -28,14 +32,10 @@ class Vector2(x: Number, y: Number) {
         set(value) {x = value.toDouble()}
 
     fun copy() = Vector2(x, y)
-
     fun round() = Vector2(round(x), round(y))
     fun ceil() = Vector2(ceil(x), ceil(y))
+
     fun floor() = Vector2(floor(x), floor(y))
-
-    private constructor(both: Number) : this(both, both)
-
-    constructor() : this(0)
     override fun toString() = "[$x, $y]"
 
     operator fun plus(other: Vector2) = Vector2(x + other.x, y + other.y)
