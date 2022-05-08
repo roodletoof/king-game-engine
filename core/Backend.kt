@@ -1,12 +1,12 @@
 package king_game_engine.core
 
+import king_game_engine.communication.Signal
 import king_game_engine.geometry.Vector2
 import king_game_engine.swing_extensions.fillRect
 import king_game_engine.swing_extensions.performRevert
-import java.awt.Color
-import java.awt.Dimension
-import java.awt.Graphics
-import java.awt.Graphics2D
+import king_game_engine.swing_extensions.scale
+import king_game_engine.swing_extensions.translate
+import java.awt.*
 import java.awt.RenderingHints.*
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
@@ -25,7 +25,7 @@ import kotlin.math.min
 class Backend(width: Int, height: Int, private val fps: Int, private val game: King) : JFrame(), ActionListener, KeyListener {
     private val panel = GamePanel(width, height, game)
     private val timer = javax.swing.Timer(1000 / fps, this)
-
+    val mousePositionRead = Signal<(newPosition: Vector2) -> Unit>()
     init {
         defaultCloseOperation = EXIT_ON_CLOSE
         add(panel)
@@ -43,6 +43,7 @@ class Backend(width: Int, height: Int, private val fps: Int, private val game: K
     override fun actionPerformed(e: ActionEvent?) {
         if (e == null) { return }
         if (e.source == timer) {
+            mousePositionRead.emit { it(panel.getMouseVector()) }
 
             game.update(calculateDt())
             panel.repaint()
@@ -53,79 +54,16 @@ class Backend(width: Int, height: Int, private val fps: Int, private val game: K
         }
     }
 
-    /**
-     * Resizes drawing operations and moves the view to the middle of the screen.
-     * Calls King.draw(canvas) Where canvas is a Graphics2D object that draws on this GamePanel.
-     * Finally, draws black bars over sections of the GamePanel if the window aspect ratio is off.
-     */
-    private class GamePanel(
-        private val preferredWidth: Int,
-        private val preferredHeight: Int,
-        private val game: King
-    ) : JPanel() {
-
-        private val RENDER_HINTS = mapOf(
-                KEY_ANTIALIASING to VALUE_ANTIALIAS_OFF,
-                KEY_ALPHA_INTERPOLATION to VALUE_ALPHA_INTERPOLATION_SPEED,
-                KEY_COLOR_RENDERING to VALUE_COLOR_RENDER_SPEED,
-                KEY_DITHERING to VALUE_DITHER_ENABLE,
-                KEY_INTERPOLATION to VALUE_INTERPOLATION_NEAREST_NEIGHBOR,
-                KEY_RENDERING to VALUE_RENDER_SPEED
-            )
-
-        override fun getPreferredSize(): Dimension {
-            return Dimension(preferredWidth, preferredHeight)
-        }
-        override fun paint(canvas: Graphics) {
-            canvas as Graphics2D
-            canvas.setRenderingHints(RENDER_HINTS)
-
-            // First reposition and scale game view
-            val scale = min(
-                width / preferredWidth.toDouble(),
-                height / preferredHeight.toDouble()
-            )
-
-            val middleCord = Vector2(width, height) / 2.0
-            val scaledSize = Vector2(preferredWidth, preferredHeight) * scale
-            val newOrigin = middleCord - scaledSize / 2.0
-
-            canvas.performRevert {
-                canvas.translate(newOrigin.x, newOrigin.y)
-                canvas.scale(scale, scale)
-                game.draw(canvas)
-            }
-
-            // Then draw black bars
-            if (newOrigin.x == newOrigin.y) { return }
-
-            canvas.color = Color.BLACK
-
-            if (newOrigin.x > newOrigin.y) {
-                val sideBarSize = newOrigin.copy()
-                sideBarSize.yInt = height
-                canvas.fillRect(Vector2(), sideBarSize.ceil())
-                canvas.fillRect(Vector2(sideBarSize.x + scaledSize.x, 0), sideBarSize.ceil())
-                return
-            }
-
-            val topBottomBarSize = newOrigin.copy()
-            topBottomBarSize.xInt = width
-            canvas.fillRect(Vector2(), topBottomBarSize.ceil())
-            canvas.fillRect(Vector2(0, topBottomBarSize.y + scaledSize.y), topBottomBarSize.ceil())
-        }
-    }
-
     private fun calculateDt(): Double {
         return 1.0 / fps
     }
 
     private fun keyWasDown(keyCode: Int) = lastFrameKeys.getOrDefault(keyCode, false)
 
-
     private val thisFrameKeys = HashMap<Int, Boolean>()
-    private val lastFrameKeys = HashMap<Int, Boolean>()
 
+
+    private val lastFrameKeys = HashMap<Int, Boolean>()
     override fun keyPressed(e: KeyEvent?) {
         if (e == null) { return }
         val keyCode = e.keyCode
@@ -139,4 +77,100 @@ class Backend(width: Int, height: Int, private val fps: Int, private val game: K
     }
 
     override fun keyTyped(e: KeyEvent?) { }
+
+}
+
+/**
+ * Resizes drawing operations and moves the view to the middle of the screen.
+ * Calls King.draw(canvas) Where canvas is a Graphics2D object that draws on this GamePanel.
+ * Finally, draws black bars over sections of the GamePanel if the window aspect ratio is off.
+ */
+private class GamePanel(
+    private val preferredWidth: Int,
+    private val preferredHeight: Int,
+    private val game: King
+) : JPanel() {
+    operator fun Point.minus(other: Point) = Vector2(this.x - other.x, this.y - other.y)
+
+    /**
+     * Get mouse location on screen.
+     * Accounts for whether the window is repositioned or scaled.
+     */
+    fun getMouseVector(): Vector2 {
+        val mouseLocation = MouseInfo.getPointerInfo().location
+        val panelLocation = locationOnScreen
+        val mouseLocationFromGamePanel = Vector2(
+            mouseLocation.x - panelLocation.x,
+            mouseLocation.y - panelLocation.y
+        )
+        val gameViewStats = calculateAndGetGameViewStats()
+
+        val mouseLocationFromOrigin = mouseLocationFromGamePanel - gameViewStats.origin
+        return mouseLocationFromOrigin / gameViewStats.scale
+    }
+
+    private val RENDER_HINTS = mapOf(
+        KEY_ANTIALIASING to VALUE_ANTIALIAS_OFF,
+        KEY_ALPHA_INTERPOLATION to VALUE_ALPHA_INTERPOLATION_SPEED,
+        KEY_COLOR_RENDERING to VALUE_COLOR_RENDER_SPEED,
+        KEY_DITHERING to VALUE_DITHER_ENABLE,
+        KEY_INTERPOLATION to VALUE_INTERPOLATION_NEAREST_NEIGHBOR,
+        KEY_RENDERING to VALUE_RENDER_SPEED
+    )
+
+
+    override fun getPreferredSize(): Dimension {
+        return Dimension(preferredWidth, preferredHeight)
+    }
+
+
+    /**
+     * Three Vector2's representing different stats of the current game view
+     * @param scale The scale of the game view compared to its original resolution.
+     * @param scaledSize The actual size of the game view after scaling.
+     * @param origin The position that becomes [0.0, 0.0] when drawing to the game view.
+     */
+    private data class GameViewStats(val scale: Vector2, val scaledSize: Vector2, val origin: Vector2)
+    private fun calculateAndGetGameViewStats(): GameViewStats {
+        val scale = Vector2(
+            min(
+                width / preferredWidth.toDouble(),
+                height / preferredHeight.toDouble()
+            )
+        )
+        val middleCord = Vector2(width, height) / 2
+        val scaledSize = Vector2(preferredWidth, preferredHeight) * scale
+        val origin = middleCord - scaledSize / 2
+        return GameViewStats(scale, scaledSize, origin)
+    }
+    override fun paint(canvas: Graphics) {
+        canvas as Graphics2D
+        canvas.setRenderingHints(RENDER_HINTS)
+
+        val (scale, scaledSize, newOrigin) = calculateAndGetGameViewStats()
+
+        canvas.performRevert {
+            canvas.translate(newOrigin)
+            canvas.scale(scale)
+            game.draw(canvas)
+        }
+
+        // Then draw black bars
+        if (newOrigin.x == newOrigin.y) {
+            return
+        }
+
+        canvas.color = Color.BLACK
+
+        if (newOrigin.x > newOrigin.y) {
+            newOrigin.yInt = height
+            canvas.fillRect(Vector2(), newOrigin.ceil())
+            canvas.fillRect(Vector2(newOrigin.x + scaledSize.x, 0), newOrigin.ceil())
+            return
+        }
+
+        newOrigin.xInt = width
+        canvas.fillRect(Vector2(), newOrigin.ceil())
+        canvas.fillRect(Vector2(0, newOrigin.y + scaledSize.y), newOrigin.ceil())
+    }
 }
