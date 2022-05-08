@@ -1,11 +1,7 @@
 package king_game_engine.drawable
 
 import king_game_engine.geometry.Vector2
-import king_game_engine.swing_extensions.performRevert
-import king_game_engine.swing_extensions.scale
-import king_game_engine.swing_extensions.shear
-import king_game_engine.swing_extensions.transform
-import king_game_engine.swing_extensions.translate
+import king_game_engine.swing_extensions.*
 import java.awt.Graphics2D
 import java.awt.geom.AffineTransform
 import java.awt.image.BufferedImage
@@ -31,7 +27,7 @@ class GameImage(filename: String){
         rotation: Double = 0.0,
         shear: Vector2 = Vector2(),
         scale: Vector2 = Vector2(1, 1),
-        anchor: Vector2 = Vector2(img.width, img.height) / 2
+        anchor: Vector2 = Vector2(img.width, img.height) / 2.0 + 0.5
     ) {
 
         val at = AffineTransform()
