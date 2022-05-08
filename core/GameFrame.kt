@@ -22,10 +22,10 @@ import kotlin.math.min
  * Also provides game with easier to use input methods.
  * Handles window scaling by assuming the user always wants to keep the same aspect ratio as the original screen resolution.
  */
-class Backend(width: Int, height: Int, private val fps: Int, private val game: King) : JFrame(), ActionListener, KeyListener {
+class GameFrame(width: Int, height: Int, private val fps: Int, private val game: King) : JFrame(), ActionListener, KeyListener {
     private val panel = GamePanel(width, height, game)
     private val timer = javax.swing.Timer(1000 / fps, this)
-    val mousePositionRead = Signal<(newPosition: Vector2) -> Unit>()
+    val mousePositionCalculated = Signal<(newPosition: Vector2) -> Unit>()
     init {
         defaultCloseOperation = EXIT_ON_CLOSE
         add(panel)
@@ -43,7 +43,7 @@ class Backend(width: Int, height: Int, private val fps: Int, private val game: K
     override fun actionPerformed(e: ActionEvent?) {
         if (e == null) { return }
         if (e.source == timer) {
-            mousePositionRead.emit { it(panel.getMouseVector()) }
+            mousePositionCalculated.emit { it( panel.getMouseVector().makeImmutable() ) }
 
             game.update(calculateDt())
             panel.repaint()
@@ -55,14 +55,13 @@ class Backend(width: Int, height: Int, private val fps: Int, private val game: K
     }
 
     private fun calculateDt(): Double {
+        // Temporary solution. Seems to work better than using nanoTime or whatever it's called.
         return 1.0 / fps
     }
 
     private fun keyWasDown(keyCode: Int) = lastFrameKeys.getOrDefault(keyCode, false)
 
     private val thisFrameKeys = HashMap<Int, Boolean>()
-
-
     private val lastFrameKeys = HashMap<Int, Boolean>()
     override fun keyPressed(e: KeyEvent?) {
         if (e == null) { return }
