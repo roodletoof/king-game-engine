@@ -33,8 +33,8 @@ class AABB(var position: Vector2, var size: Vector2, private val anchor: Vector2
     override fun toString() = "northWest = $northWest, southEast = $southEast"
 
     infix fun overlaps(other: AABB): Boolean {
-        return  northWest bothLesserOrEqualThan  other.southEast &&
-                southEast bothGreaterOrEqualThan other.northWest
+        return  northWest bothLesserThanOrEqualTo  other.southEast &&
+                southEast bothGreaterThanOrEqualTo other.northWest
     }
 
     /**
@@ -116,6 +116,6 @@ class AABB(var position: Vector2, var size: Vector2, private val anchor: Vector2
             south = value.y
         }
 
-    private infix fun Vector2.bothGreaterOrEqualThan(other: Vector2) = this.x >= other.x && this.y >= other.y
-    private infix fun Vector2.bothLesserOrEqualThan(other: Vector2) = this.x <= other.x && this.y <= other.y
+    private infix fun Vector2.bothGreaterThanOrEqualTo(other: Vector2) = this.x >= other.x && this.y >= other.y
+    private infix fun Vector2.bothLesserThanOrEqualTo(other: Vector2) = this.x <= other.x && this.y <= other.y
 }
