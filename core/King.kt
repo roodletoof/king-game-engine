@@ -12,16 +12,17 @@ import java.awt.Graphics2D
  *  - Giving easy access to keyboard and mouse input reading.
  */
 abstract  class King (val screenWidth: Int, val screenHeight: Int, val fps: Int) {
-    private var backend: Backend? = null
+    private var gameFrame: GameFrame? = null
 
     /**
-     * The current position of the mouse. Accounts for the current game-view scale and position.
+     * An immutable Vector2.
+     * represents the current position of the mouse. Accounts for the current game-view scale and position.
      * The value will be [[screenWidth], [screenHeight]] if the mouse in the bottom-right corner
      * of the drawable section of the game panel.
      * The value will be [[0.0, 0.0]] if the mouse is in the top-left corner of the drawable section
      * of the game panel.
      */
-    var mousePosition: Vector2 = Vector2()
+    var mousePosition: Vector2 = Vector2(isMutable = false)
         private set
 
     /**
@@ -41,16 +42,21 @@ abstract  class King (val screenWidth: Int, val screenHeight: Int, val fps: Int)
     abstract fun draw(canvas: Graphics2D)
 
     private val gameNotRunning = java.lang.IllegalStateException("Can not check input while the game is not running.")
-    fun keyIsDown(keyCode: Int) = backend?.keyIsDown(keyCode) ?: throw gameNotRunning
-    fun keyJustPressed(keyCode: Int) = backend?.keyJustPressed(keyCode) ?: throw gameNotRunning
-    fun keyJustReleased(keyCode: Int) = backend?.keyJustReleased(keyCode) ?: throw gameNotRunning
+    fun keyIsDown(keyCode: Int) = gameFrame?.keyIsDown(keyCode) ?: throw gameNotRunning
+    fun keyJustPressed(keyCode: Int) = gameFrame?.keyJustPressed(keyCode) ?: throw gameNotRunning
+    fun keyJustReleased(keyCode: Int) = gameFrame?.keyJustReleased(keyCode) ?: throw gameNotRunning
 
     /**
      * Starts the game.
+     * @return this
      */
     fun run(): King {
-        backend = Backend(screenWidth, screenHeight, fps, this)
-        backend!!.mousePositionRead.connect { this.mousePosition = it }
+        gameFrame = GameFrame(screenWidth, screenHeight, fps, this)
+
+        gameFrame!!.mousePositionCalculated.connect {
+            this.mousePosition = it.makeImmutable().setName("mousePosition")
+        }
+
         return this
     }
 }
