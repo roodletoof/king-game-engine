@@ -1,6 +1,6 @@
 package king_game_engine.core
 
-import king_game_engine.geometry.Vector2
+import king_game_engine.geometry.ImmutableVector2
 import java.awt.Graphics2D
 
 
@@ -22,7 +22,7 @@ abstract  class King (val screenWidth: Int, val screenHeight: Int, val fps: Int)
      * The value will be [[0.0, 0.0]] if the mouse is in the top-left corner of the drawable section
      * of the game panel.
      */
-    var mousePosition: Vector2 = Vector2(isMutable = false)
+    var mousePosition: ImmutableVector2 = ImmutableVector2()
         private set
 
     /**
@@ -54,7 +54,7 @@ abstract  class King (val screenWidth: Int, val screenHeight: Int, val fps: Int)
         gameFrame = GameFrame(screenWidth, screenHeight, fps, this)
 
         gameFrame!!.mousePositionCalculated.connect {
-            this.mousePosition = it.makeImmutable().setName("mousePosition")
+            this.mousePosition = it
         }
 
         return this

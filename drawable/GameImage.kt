@@ -1,5 +1,6 @@
 package king_game_engine.drawable
 
+import king_game_engine.geometry.ImmutableVector2
 import king_game_engine.geometry.Vector2
 import king_game_engine.swing_extensions.*
 import java.awt.Graphics2D
@@ -23,11 +24,11 @@ class GameImage(filename: String){
 
     fun draw(
         canvas: Graphics2D,
-        position: Vector2 = Vector2(isMutable = false),
+        position: Vector2 = ImmutableVector2(),
         rotation: Double = 0.0,
-        shear: Vector2 = Vector2(isMutable = false),
-        scale: Vector2 = Vector2(1, 1, isMutable = false),
-        anchor: Vector2 = (Vector2(img.width, img.height) / 2 + 0.5).makeImmutable()
+        shear: Vector2 = ImmutableVector2(),
+        scale: Vector2 = ImmutableVector2(1, 1),
+        anchor: Vector2 = ImmutableVector2(Vector2(img.width, img.height) / 2 + 0.5)
     ) {
 
         val at = AffineTransform()

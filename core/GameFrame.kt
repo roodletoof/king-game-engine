@@ -1,6 +1,7 @@
 package king_game_engine.core
 
 import king_game_engine.communication.Signal
+import king_game_engine.geometry.ImmutableVector2
 import king_game_engine.geometry.Vector2
 import king_game_engine.swing_extensions.fillRect
 import king_game_engine.swing_extensions.performRevert
@@ -25,7 +26,7 @@ import kotlin.math.min
 class GameFrame(width: Int, height: Int, private val fps: Int, private val game: King) : JFrame(), ActionListener, KeyListener {
     private val panel = GamePanel(width, height, game)
     private val timer = javax.swing.Timer(1000 / fps, this)
-    val mousePositionCalculated = Signal<(newPosition: Vector2) -> Unit>()
+    val mousePositionCalculated = Signal<(newPosition: ImmutableVector2) -> Unit>()
     init {
         defaultCloseOperation = EXIT_ON_CLOSE
         add(panel)
@@ -43,7 +44,7 @@ class GameFrame(width: Int, height: Int, private val fps: Int, private val game:
     override fun actionPerformed(e: ActionEvent?) {
         if (e == null) { return }
         if (e.source == timer) {
-            mousePositionCalculated.emit { it( panel.getMouseVector().makeImmutable() ) }
+            mousePositionCalculated.emit { it( panel.getMouseVector() ) }
 
             game.update(calculateDt())
             panel.repaint()
@@ -95,7 +96,7 @@ private class GamePanel(
      * Get mouse location on screen.
      * Accounts for whether the window is repositioned or scaled.
      */
-    fun getMouseVector(): Vector2 {
+    fun getMouseVector(): ImmutableVector2 {
         val mouseLocation = MouseInfo.getPointerInfo().location
         val panelLocation = locationOnScreen
         val mouseLocationFromGamePanel = Vector2(
@@ -105,7 +106,7 @@ private class GamePanel(
         val gameViewStats = calculateAndGetGameViewStats()
 
         val mouseLocationFromOrigin = mouseLocationFromGamePanel - gameViewStats.origin
-        return mouseLocationFromOrigin / gameViewStats.scale
+        return ImmutableVector2(mouseLocationFromOrigin / gameViewStats.scale)
     }
 
     private val RENDER_HINTS = mapOf(
