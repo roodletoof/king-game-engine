@@ -10,18 +10,31 @@ import java.io.File
 import java.io.IOException
 import javax.imageio.ImageIO
 
-class GameImage(filename: String){
+/**
+ * Exists to make drawing images with transforms easier.
+ */
+class GameImage(filePath: String){
     private var img: BufferedImage
 
     init {
         try {
-            img = ImageIO.read(File("src/main/resources/$filename"))
+            img = ImageIO.read(File(filePath))
         } catch (e: IOException) {
             throw RuntimeException(e)
         }
 
     }
 
+    /**
+     * Draw this GameImage to given canvas.
+     * All if you use any of the transformations, the images anchor will still be drawn at the given position.
+     * @param canvas The Graphics2D object to draw to.
+     * @param position Where you want the image to be drawn.
+     * @param rotation How much should the image be rotated in radians.
+     * @param shear How much should the image be sheared in the x- and y-axis.
+     * @param scale The scale of the image in the x- and y-axis.
+     * @param anchor The location within the image that should be placed on the given position.
+     */
     fun draw(
         canvas: Graphics2D,
         position: Vector2 = ImmutableVector2(),
