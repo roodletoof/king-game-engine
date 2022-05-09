@@ -4,6 +4,8 @@ package king_game_engine.geometry
  * Has all the functionality of Vector2, except the ability to set the x and y fields.
  * Everything that would have returned a Vector2 still does.
  * E.g. adding a number or vector, calling copy(), etc.
+ * The only purpose of this class is that you can send an instance of it to a function/method and be assured
+ * that the values won't change while you're not in control.
  */
 class ImmutableVector2(x: Number, y: Number) : Vector2(x, y) {
     override var x: Double
