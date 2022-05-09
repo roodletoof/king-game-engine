@@ -15,14 +15,13 @@ abstract  class King (val screenWidth: Int, val screenHeight: Int, val fps: Int)
     private var gameFrame: GameFrame? = null
 
     /**
-     * An immutable Vector2.
      * represents the current position of the mouse. Accounts for the current game-view scale and position.
      * The value will be [[screenWidth], [screenHeight]] if the mouse in the bottom-right corner
      * of the drawable section of the game panel.
      * The value will be [[0.0, 0.0]] if the mouse is in the top-left corner of the drawable section
      * of the game panel.
      */
-    var mousePosition: ImmutableVector2 = ImmutableVector2()
+    var mousePosition = ImmutableVector2()
         private set
 
     /**
@@ -53,6 +52,7 @@ abstract  class King (val screenWidth: Int, val screenHeight: Int, val fps: Int)
     fun run(): King {
         gameFrame = GameFrame(screenWidth, screenHeight, fps, this)
 
+        // Using a signal because the setter of mousePosition needs to be private.
         gameFrame!!.mousePositionCalculated.connect {
             this.mousePosition = it
         }
