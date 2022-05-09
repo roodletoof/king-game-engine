@@ -17,6 +17,7 @@ open class Vector2(x: Number, y: Number) {
     constructor(both: Number) : this(both, both)
     constructor() : this(0)
     constructor(immutableVector2: ImmutableVector2) : this(immutableVector2.x, immutableVector2.y)
+    constructor(array: DoubleArray) : this(array[0], array[1])
 
     open var x = x.toDouble()
     open var y = y.toDouble()
@@ -90,6 +91,7 @@ open class Vector2(x: Number, y: Number) {
         return false
     }
 
+    fun toDoubleArray() = doubleArrayOf(x, y)
 
     override fun hashCode(): Int {
         var result = x.hashCode()

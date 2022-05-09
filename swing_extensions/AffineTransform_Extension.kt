@@ -1,15 +1,15 @@
 package king_game_engine.swing_extensions
 
 import king_game_engine.geometry.Vector2
-import java.awt.Point
 import java.awt.geom.AffineTransform
 
 fun AffineTransform.transform(source: Vector2): Vector2 {
-    //TODO REDO THIS TO USE DOUBLE ARRAY INSTEAD. POINTS ARE CREATING WEIRD ROTATIONS.
-    val src = Point(source.xInt, source.yInt)
-    val dst = Point()
-    transform(src, dst)
-    return Vector2(dst.x, dst.y)
+    val src = source.toDoubleArray()
+    val dst = Vector2().toDoubleArray()
+
+    transform(src, 0, dst, 0, 1)
+
+    return Vector2(dst)
 }
 fun AffineTransform.translate(amount: Vector2) {
     translate(amount.x, amount.y)
