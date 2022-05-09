@@ -5,6 +5,7 @@ import java.awt.Point
 import java.awt.geom.AffineTransform
 
 fun AffineTransform.transform(source: Vector2): Vector2 {
+    //TODO REDO THIS TO USE DOUBLE ARRAY INSTEAD. POINTS ARE CREATING WEIRD ROTATIONS.
     val src = Point(source.xInt, source.yInt)
     val dst = Point()
     transform(src, dst)
