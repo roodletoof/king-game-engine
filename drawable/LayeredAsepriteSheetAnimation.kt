@@ -18,11 +18,18 @@ package king_game_engine.drawable
  */
 
 
-// I decided to get the frame-data this way to avoid any external dependencies, and because I can't think of an easier way atm.
+/**
+ * I Decided to read the animation data this way because:
+ *      1.  Considering the fact that Aseprite's json data format is complete ass;
+ *          If the format of the exported json data were to change, it would probably change significantly in its structure.
+ *          And if that was the case, this code would probably have to change anyway.
+ *      2.  I want to avoid any external libraries.
+ */
 
-// matches every layer name in order
-// value is the entire match
-// "(?<=name\": \").*(?=\", \"opacity)"gm
+
+// matches every layer name, and its opacity in order from lowest z-index to highest.
+// values are in groups: name, opacity
+// "(?<=name\": \")(?<name>.*)(?:\", \"opacity\D*)(?<opacity>\d+)"gm
 
 // replace layerName with layer name to find x, y, w, h of sprite-sheet for each frame.
 // values are in groups: x, y, w and h
@@ -35,7 +42,7 @@ package king_game_engine.drawable
 // Extract animation tag names and the frame range associated with the tag
 // values are in groups: name, from, to
 // "(?:name\": \")(?<name>[^\"]*)(?:\", \"from\D*)(?<from>\d+)(?:\D*)(?<to>\d+)"gm
-class LayeredAnimatedAseprite(private val jsonPath: String, private val spriteSheetPath: String){
+class LayeredAsepriteSheetAnimation(private val jsonPath: String, private val spriteSheetPath: String){
     private val img = GameImage(spriteSheetPath)
 
 
