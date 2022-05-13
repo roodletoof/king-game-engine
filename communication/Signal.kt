@@ -3,7 +3,7 @@ package king_game_engine.communication
 import java.util.*
 
 /**
- * Class to help communication between game objects
+ * Exists to allow objects to communicate without exposing functions and fields that could be private.
  */
 class Signal<T : Function<Unit>> {
     private val connectedReceiverLambdas = LinkedList<T>()
@@ -32,7 +32,7 @@ class Signal<T : Function<Unit>> {
 
 
 private fun main() { // Example to show how the signal works.
-    // Imagine playerWasHit being a value member on a global Object acting as a signal bus.
+    // Imagine playerWasHit being a text member on a global Object acting as a signal bus.
     val playerWasHit = Signal<(enemy_name: String, damage_dealt: Int) -> Unit>()
 
     // Imagine the different Signal.connect calls coming from different objects.
