@@ -8,7 +8,10 @@ package king_game_engine.geometry
  * @param size The dimensions of the AABB.
  * @param anchor Where on the AABB should be where the position represents.
  */
-class AABB(var position: Vector2, var size: Vector2, private val anchor: Vector2 = size / 2 + 0.5) {
+class AABB(var position: Vector2, var size: Vector2, anchor: Vector2 = size / 2 + 0.5) {
+    private val normalizedAnchor = ImmutableVector2(anchor / size)
+    val anchor: Vector2 // Doing this to keep the anchor in the same relative position if the AABB is resized.
+        get() = normalizedAnchor * size
 
     /**
      * Axis aligned bounding box.
