@@ -35,8 +35,8 @@ open class Vector2(x: Number, y: Number) {
         set(value) {x = value.toDouble()}
 
     var yFloat: Float
-        get() = x.toFloat()
-        set(value) {x = value.toDouble()}
+        get() = y.toFloat()
+        set(value) {y = value.toDouble()}
 
     fun copy() = Vector2(x, y)
     fun round() = Vector2(round(x), round(y))
@@ -70,10 +70,9 @@ open class Vector2(x: Number, y: Number) {
 
     fun len() = sqrt(lenSquared())
     infix fun longerThan(other: Vector2) = lenSquared() > other.lenSquared()
-
-    infix fun longerThan(other: Number) = len() > other.toDouble()
+    infix fun longerThan(other: Number) = lenSquared() > other.toDouble().pow(2)
     infix fun shorterThan(other: Vector2) = lenSquared() < other.lenSquared()
-    infix fun shorterThan(other: Number) = len() < other.toDouble()
+    infix fun shorterThan(other: Number) = lenSquared() < other.toDouble().pow(2)
     fun dot(other: Vector2) = x * other.x + y * other.y
 
 
