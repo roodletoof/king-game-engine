@@ -25,6 +25,8 @@ class GameImage(filePath: String){
 
     }
 
+    val size = ImmutableVector2(img.width, img.height)
+
     /**
      * Draw this GameImage to given canvas.
      * All if you use any of the transformations, the images anchor will still be drawn at the given position.
@@ -41,7 +43,7 @@ class GameImage(filePath: String){
         rotation: Double = 0.0,
         shear: Vector2 = ImmutableVector2(),
         scale: Vector2 = ImmutableVector2(1, 1),
-        anchor: Vector2 = ImmutableVector2(Vector2(img.width, img.height) / 2 + 0.5)
+        anchor: Vector2 = ImmutableVector2(size / 2 + 0.5)
     ) {
 
         val at = AffineTransform()
