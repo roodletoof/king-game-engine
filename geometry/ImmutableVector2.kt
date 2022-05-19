@@ -16,6 +16,22 @@ class ImmutableVector2(x: Number, y: Number) : Vector2(x, y) {
         set(_) = throwIllegalAccess()
         get() = super.y
 
+    override var xInt: Int
+        set(_) = throwIllegalAccess()
+        get() = super.xInt
+
+    override var yInt: Int
+        set(_) = throwIllegalAccess()
+        get() = super.yInt
+
+    override var xFloat: Float
+        set(_) = throwIllegalAccess()
+        get() = super.xFloat
+
+    override var yFloat: Float
+        set(_) = throwIllegalAccess()
+        get() = super.yFloat
+
     constructor(vector2: Vector2) : this(vector2.x, vector2.y)
     constructor(both: Number) : this(both, both)
     constructor() : this(0, 0)
