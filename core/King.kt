@@ -1,6 +1,7 @@
 package king_game_engine.core
 
 import king_game_engine.geometry.ImmutableVector2
+import java.awt.Dimension
 import java.awt.Graphics2D
 
 
@@ -11,7 +12,7 @@ import java.awt.Graphics2D
  *  - Let the user make the game without worrying about things like resizing the game view.
  *  - Giving easy access to keyboard and mouse input reading.
  */
-abstract  class King (val screenWidth: Int, val screenHeight: Int, val fps: Int) {
+abstract  class King (val screenWidth: Int, val screenHeight: Int, val fps: Int, private val initialWindowScale: Double = 1.0) {
     private var gameFrame: GameFrame? = null
 
     /**
@@ -51,6 +52,12 @@ abstract  class King (val screenWidth: Int, val screenHeight: Int, val fps: Int)
      */
     fun run(): King {
         gameFrame = GameFrame(screenWidth, screenHeight, fps, this)
+
+        val initialSize = gameFrame!!.size
+        gameFrame!!.size = Dimension(
+            (initialSize.width * initialWindowScale).toInt(),
+            (initialSize.height * initialWindowScale).toInt()
+        )
 
         // Using a signal because the setter of mousePosition needs to be private.
         gameFrame!!.mousePositionCalculated.connect {
